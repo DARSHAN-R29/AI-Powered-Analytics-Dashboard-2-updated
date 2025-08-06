@@ -1,17 +1,30 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
+import html2canvas from 'html2canvas';
 
 const data = [
   { name: 'Active Users', value: 7000 },
   { name: 'Inactive Users', value: 5500 },
 ];
 
-const COLORS = ['#3b82f6', '#e5e7eb'];
+const COLORS = ['#10b981', '#9ca3af'];
 
 export default function UserActivityChart({ darkMode }) {
+  const chartRef = useRef();
+
+  const downloadChart = () => {
+    html2canvas(chartRef.current).then(canvas => {
+      const link = document.createElement('a');
+      link.download = 'user-activity-chart.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    });
+  };
+
   return (
     <div
-      className={`p-4 rounded-2xl shadow-md ${
+      ref={chartRef}
+      className={`p-4 rounded-2xl shadow-md relative ${
         darkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'
       }`}
     >
@@ -41,6 +54,12 @@ export default function UserActivityChart({ darkMode }) {
           />
         </PieChart>
       </ResponsiveContainer>
+      <button
+        onClick={downloadChart}
+        className="absolute top-4 right-4 px-2 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        ⬇️ Download PNG
+      </button>
     </div>
   );
 }
